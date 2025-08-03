@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>谁是幸运儿</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf9 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #4361ee;
+            font-size: 3.5rem;
+            margin: 30px 0;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #4361ee, transparent);
+            border-radius: 2px;
+        }
+        
+        .display-box {
+            width: 100%;
+            height: 33vh;
+            min-height: 250px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .display-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #4361ee, #3a0ca3, #7209b7);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .number {
+            font-size: 10rem;
+            font-weight: 800;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .number.lucky {
+            transform: scale(1.5);
+            color: #e63946;
+            text-shadow: 0 0 15px rgba(230, 57, 70, 0.5);
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(67, 97, 238, 0.5);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+        
+        .btn:hover::after {
+            transform: rotate(30deg) translate(20%, 20%);
+        }
+        
+        .btn.pause {
+            background: linear-gradient(135deg, #e63946 0%, #d00000 100%);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+        }
+        
+        .btn.pause:hover {
+            box-shadow: 0 12px 25px rgba(230, 57, 70, 0.5);
+        }
+        
+        .info {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: left;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .info h2 {
+            color: #4361ee;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info ul {
+            padding-left: 20px;
+        }
+        
+        .info li {
+            margin: 8px 0;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .number {
+                font-size: 7rem;
+            }
+            
+            .btn {
+                padding: 15px 40px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-star"></i> 谁是幸运儿 <i class="fas fa-star"></i></h1>
+        
+        <div class="display-box">
+            <div class="number" id="numberDisplay">?</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="controlButton">开始抽取</button>
+        </div>
+        
+        <div class="info">
+            <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
+            <ul>
+                <li>点击"开始抽取"按钮开始随机抽取学号</li>
+                <li>按钮变为"暂停"后，再次点击将停止抽取</li>
+                <li>停止后，被选中的幸运学号将放大并变为红色</li>
+                <li>全班共有45名学生，抽取范围1-45号</li>
+                <li>再次点击"开始抽取"可重新开始随机抽取</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            班级随机抽取工具 | 班主任专用 | © 2023
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const numberDisplay = document.getElementById('numberDisplay');
+        const controlButton = document.getElementById('controlButton');
+        
+        // 变量初始化
+        let isRunning = false;
+        let intervalId = null;
+        const minNumber = 1;
+        const maxNumber = 45;
+        
+        // 生成随机学号
+        function generateRandomNumber() {
+            return Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber;
+        }
+        
+        // 开始随机抽取
+        function startRandom() {
+            isRunning = true;
+            controlButton.textContent = '暂停抽取';
+            controlButton.classList.add('pause');
+            numberDisplay.classList.remove('lucky');
+            
+            // 快速显示随机数
+            intervalId = setInterval(() => {
+                numberDisplay.textContent = generateRandomNumber();
+            }, 80);
+        }
+        
+        // 暂停抽取
+        function pauseRandom() {
+            isRunning = false;
+            clearInterval(intervalId);
+            controlButton.textContent = '开始抽取';
+            controlButton.classList.remove('pause');
+            numberDisplay.classList.add('lucky');
+        }
+        
+        // 按钮点击事件处理
+        controlButton.addEventListener('click', function() {
+            if (isRunning) {
+                pauseRandom();
+            } else {
+                startRandom();
+            }
+        });
+        
+        // 初始显示
+        numberDisplay.textContent = '?';
+    </script>
+</body>
+</html>
